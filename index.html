@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>动画</title>
+    <style>
+        body {
+            font-family: "SF UI Text", serif, sans-serif;
+            font-size: 12px;
+            padding-bottom: 500px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #div1, #div3 {
+            width: 200px;
+            height: 200px;
+            margin-top: 20px;
+            background: rgb(43, 221, 255);
+            position: relative;
+            left: -200px;
+            top: 0;
+        }
+
+        #div1 span, #div3 span {
+            width: 20px;
+            background: rgb(255, 119, 157);
+            position: absolute;
+            left: 200px;
+            top: 75px;
+            color: #fff;
+            text-align: center;
+            cursor: pointer;
+            padding: 5px 1px 5px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        #div1 span:hover, #div3 span:hover {
+            background: rgb(255, 84, 137);
+        }
+
+        #div2, #div7, #div8 {
+            width: 200px;
+            height: 200px;
+            background: rgb(255, 84, 137);
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        #div8 {
+            background: rgb(43, 221, 255);
+        }
+
+        #div4 {
+            margin-bottom: 20px;
+        }
+
+        #div4 li {
+            width: 200px;
+            height: 100px;
+            list-style: none;
+            background: rgb(43, 221, 255);
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        #div5 {
+            margin-bottom: 20px;
+        }
+
+        #div5 li {
+            width: 200px;
+            height: 200px;
+            display: inline-block;
+            margin-right: 10px;
+            list-style: none;
+            background: rgb(255, 84, 137);
+            cursor: pointer;
+        }
+
+        #div6 {
+            margin-bottom: 20px;
+        }
+
+        #div6 li {
+            width: 200px;
+            height: 100px;
+            list-style: none;
+            background: rgb(43, 221, 255);
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+<div id="div1">
+    <span id="share">分享</span>
+</div>
+
+<div id="div2"></div>
+
+<div id="div3">
+    <span id="share2">分享</span>
+</div>
+
+<div id="div4">
+    <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+</div>
+<div id="div5">
+    <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+</div>
+<div id="div6">
+    <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+</div>
+<div id="div7"></div>
+<div id="div8"></div>
+<script>
+    window.onload = function () {
+
+        //速度动画
+        (function () {
+            var div1 = document.getElementById("div1");
+            var timer = null;
+
+            div1.onmouseover = function () {
+                startMove(0);
+            };
+            div1.onmouseout = function () {
+                startMove(-200);
+            };
+            function startMove(targetPosition) {
+                clearInterval(timer);
+                var speed = 0;
+                if (targetPosition < 0) {
+                    speed = -10;
+                } else {
+                    speed = 10;
+                }
+                timer = setInterval(function () {
+                    if (div1.offsetLeft == targetPosition) {
+                        clearInterval(timer);
+                    } else {
+                        div1.style.left = div1.offsetLeft + speed + 'px';
+                    }
+                }, 30);
+            }
+
+        })();
+
+        //透明度动画
+        (function () {
+            var div2 = document.getElementById("div2");
+            var timer = null;
+
+            div2.onmouseover = function () {
+                changeOpacity(60);
+            };
+            div2.onmouseout = function () {
+                changeOpacity(100);
+            };
+
+            var opacity = 100;
+
+            function changeOpacity(targetOpacity) {
+                clearInterval(timer);
+                var speed = 0;
+                if (opacity > targetOpacity) {
+                    speed = -10;
+                } else {
+                    speed = 10;
+                }
+                timer = setInterval(function () {
+                    if (opacity == targetOpacity) {
+                        clearInterval(timer);
+                    } else {
+                        opacity = opacity + speed;
+                        div2.style.opacity = opacity / 100;
+                    }
+                }, 30);
+            }
+
+        })();
+
+        //缓冲运动
+        (function () {
+            var div3 = document.getElementById("div3");
+            var timer = null;
+
+            div3.onmouseover = function () {
+                startMove(0);
+            };
+            div3.onmouseout = function () {
+                startMove(-200);
+            };
+            function startMove(targetPosition) {
+                clearInterval(timer);
+
+                timer = setInterval(function () {
+                    var speed = (targetPosition - div3.offsetLeft) / 10;
+                    speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+                    if (div3.offsetLeft == targetPosition) {
+                        clearInterval(timer);
+                    } else {
+                        div3.style.left = div3.offsetLeft + speed + 'px';
+                    }
+                }, 20);
+            }
+        })();
+
+
+        //获取元素的实际属性值
+        function getStyle(obj, attr) {
+            if (window.getComputedStyle) {
+                return window.getComputedStyle(obj, null)[attr];
+            } else if (obj.currentStyle) {
+                return obj.currentStyle[attr];
+            }
+            return null;
+        }
+
+        //多物体运动
+        (function () {
+            var lists = document.getElementById("div4").getElementsByTagName("li");
+            for (var i = 0; i < lists.length; i++) {
+                lists[i].timer = null; //给每个元素设置一个单独的定时器
+                lists[i].onmouseover = function () {
+                    startMove(this, 600);
+                };
+
+                lists[i].onmouseout = function () {
+                    startMove(this, 200);
+                };
+            }
+
+            function startMove(obj, targetWidth) {
+                if (obj.timer) {
+                    clearInterval(obj.timer);
+                }
+                obj.timer = setInterval(function () {
+                    var currentWidth = parseInt(getStyle(obj, 'width'));
+
+                    var speed = (targetWidth - currentWidth) / 10; //缓冲运动
+                    speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+
+                    if (currentWidth == targetWidth) {
+                        clearInterval(obj.timer);
+                    } else {
+                        obj.style.width = currentWidth + speed + 'px';
+                    }
+                }, 20);
+            }
+        })();
+
+        //多物体透明度动画
+        (function () {
+            var lists = document.getElementById("div5").getElementsByTagName("li");
+
+            for (var i = 0; i < lists.length; i++) {
+                lists[i].timer = null;
+                lists[i].opacity = 100;
+                lists[i].onmouseover = function () {
+                    changeOpacity(this, 60);
+                };
+                lists[i].onmouseout = function () {
+                    changeOpacity(this, 100);
+                };
+            }
+
+            function changeOpacity(obj, targetOpacity) {
+                if (obj.timer) {
+                    clearInterval(obj.timer);
+                }
+                var speed = 0;
+                if (obj.opacity > targetOpacity) {
+                    speed = -10;
+                } else {
+                    speed = 10;
+                }
+                obj.timer = setInterval(function () {
+                    if (obj.opacity == targetOpacity) {
+                        clearInterval(obj.timer);
+                    } else {
+                        obj.opacity = obj.opacity + speed;
+                        obj.style.opacity = obj.opacity / 100;
+                    }
+                }, 30);
+            }
+        })();
+
+        //任意属性参数
+        (function () {
+            var lists = document.getElementById("div6").getElementsByTagName("li");
+            for (var i = 0; i < lists.length; i++) {
+                lists[i].timer = null; //给每个元素设置一个单独的定时器
+            }
+
+            lists[0].onmouseover = function () {
+                change(this, 'width', 600);
+            };
+
+            lists[0].onmouseout = function () {
+                change(this, 'width', 200);
+            };
+            lists[1].onmouseover = function () {
+                change(this, 'opacity', 60);
+            };
+
+            lists[1].onmouseout = function () {
+                change(this, 'opacity', 100);
+            };
+
+            lists[2].onmouseover = function () {
+                change(this, 'height', 400);
+            };
+
+            lists[2].onmouseout = function () {
+                change(this, 'height', 100);
+            };
+
+            function change(obj, attr, targetValue) {
+                if (obj.timer) {
+                    clearInterval(obj.timer);
+                }
+
+                obj.timer = setInterval(function () {
+                    var currentValue = 0;
+                    if (attr == 'opacity') {
+                        currentValue = Math.round((parseFloat(getStyle(obj, attr)) * 100));
+                    } else {
+                        currentValue = parseInt(getStyle(obj, attr));
+                    }
+
+                    var speed = (targetValue - currentValue) / 10; //缓冲运动
+                    speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+
+                    if (currentValue == targetValue) {
+                        clearInterval(obj.timer);
+                    } else {
+                        if (attr == 'opacity') {
+                            obj.style.opacity = (currentValue + speed) / 100;
+                        } else {
+                            obj.style[attr] = currentValue + speed + 'px';
+                        }
+                    }
+                }, 20);
+            }
+        })();
+
+        //链式运动
+        (function () {
+            var div7 = document.getElementById("div7");
+            div7.onmouseover = function () {
+                var _this = this;
+                change(_this, 'width', 400, function () {
+                    change(_this, 'height', 400, function () {
+                        change(_this, 'opacity', 30, function () {
+                            change(_this, 'opacity', 100, function () {
+                                change(_this, 'height', 200, function () {
+                                    change(_this, 'width', 200);
+                                });
+                            });
+                        });
+                    });
+                });
+            };
+
+            function change(obj, attr, targetValue, fn) {
+                if (obj.timer) {
+                    clearInterval(obj.timer);
+                }
+
+                obj.timer = setInterval(function () {
+                    //取得当前值
+                    var currentValue = 0;
+                    if (attr == 'opacity') {
+                        currentValue = Math.round((parseFloat(getStyle(obj, attr)) * 100));
+                    } else {
+                        currentValue = parseInt(getStyle(obj, attr));
+                    }
+
+                    //计算速度
+                    var speed = (targetValue - currentValue) / 10; //缓冲运动
+                    speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+
+                    //检测停止
+                    if (currentValue == targetValue) {
+                        clearInterval(obj.timer);
+                        if (fn) {
+                            fn();
+                        }
+                    } else {
+                        if (attr == 'opacity') {
+                            obj.style.opacity = (currentValue + speed) / 100;
+                        } else {
+                            obj.style[attr] = currentValue + speed + 'px';
+                        }
+                    }
+                }, 20);
+            }
+
+        })();
+
+        //同时运动
+        (function () {
+            var div8 = document.getElementById("div8");
+            div8.onmouseover = function () {
+                var _this = this;
+                animate(_this, {width: 400, height: 400, opacity: 50}, function () {
+                    alert("完成");
+                });
+            };
+
+            div8.onmouseout = function () {
+                var _this = this;
+                animate(_this, {width: 200, height: 200, opacity: 100});
+            };
+
+            function animate(obj, attrs, fn) {
+                if (obj.timer) {
+                    clearInterval(obj.timer);
+                }
+
+                obj.timer = setInterval(function () {
+                    var allCompleted = true;
+                    for (var attr in attrs) {
+                        //取得当前值
+                        var currentValue = 0;
+                        if (attr == 'opacity') {
+                            currentValue = Math.round((parseFloat(getStyle(obj, attr)) * 100));
+                        } else {
+                            currentValue = parseInt(getStyle(obj, attr));
+                        }
+
+                        //计算速度
+                        var speed = (attrs[attr] - currentValue) / 10; //缓冲运动
+                        speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+
+                        //检测停止
+                        if (currentValue != attrs[attr]) {
+                            allCompleted = false;
+                        }
+                        if (attr == 'opacity') {
+                            obj.style.opacity = (currentValue + speed) / 100;
+                        } else {
+                            obj.style[attr] = currentValue + speed + 'px';
+                        }
+                    }
+
+                    if (allCompleted) { //只有当所有的属性都完成,才清除定时器
+                        clearInterval(obj.timer);
+                        if (fn) {
+                            fn();
+                        }
+                    }
+                }, 30);
+            }
+
+        })();
+    };
+</script>
+</body>
+</html>
